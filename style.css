@@ -1,0 +1,48 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+.title {
+    max-width: 1600px;
+    text-align: center;
+    width: 100%;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+}
+
+.text {
+    display: flex;
+    justify-content: center;
+}
+
+
+.head {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.input {
+    margin-left: 5px;
+}
+
+.container {
+    margin-top: 5%;
+    width: 500px;
+    height: 500px;
+    border: 1px solid black;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.cell {
+    border: 1px solid black;
+}
