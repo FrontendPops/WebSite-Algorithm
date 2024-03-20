@@ -46,3 +46,8 @@
 .cell {
     border: 1px solid black;
 }
+
+.button {
+    margin-top: 30px;
+    padding: 10px 40px;
+}
