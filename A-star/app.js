@@ -4,6 +4,12 @@ import { containerWidth, state, colors, flag } from "./constants.js";
 const createMaze = () => {
     document.getElementById("startPoint").removeEventListener("click", startPoint);
     document.getElementById("endPoint").removeEventListener("click", endPoint);
+    flag.startPointClicked = false;
+    flag.endPointClicked = false;
+    flag.countClickGreen = true;
+    flag.countClickRed = true;
+    state.currentGreenCell = null;
+    state.currentRedCell = null;
 
     const matrixSize = parseInt(document.getElementById("matrixSize").value);
     const sizeSquare = containerWidth / matrixSize;
@@ -43,27 +49,32 @@ const createMaze = () => {
         matrixArray.push(rowArray);
     }
     document.getElementById("startPoint").addEventListener("click", function (event) {
-        let cellDiv = event.target;
-        if (state.currentGreenCell === null && flag.countClickGreen) {
-            document.getElementById("startPoint").removeEventListener("click", startPoint);
-            startPoint(matrixContainer, state, flag);
-        } else {
-            document.getElementById("startPoint").removeEventListener("click", startPoint);
-            cellDiv.style.backgroundColor = colors.whiteColor;
-            state.currentGreenCell = null;
-            flag.countClickGreen = true;
+        if (!flag.startPointClicked) {
+            let cellDiv = event.target;
+            if (state.currentGreenCell === null && flag.countClickGreen) {
+                startPoint(matrixContainer, state, flag);
+            } else {
+                cellDiv.style.backgroundColor = colors.whiteColor;
+                state.currentGreenCell = null;
+                flag.countClickGreen = true;
+            }
+            flag.startPointClicked = true;
         }
+
     });
 
     document.getElementById("endPoint").addEventListener("click", function (event) {
-        let cellDiv = event.target;
-        if (state.currentRedCell === null && flag.countClickRed) {
-            endPoint(matrixContainer, state, flag);
-        } else {
-            cellDiv.style.backgroundColor = colors.whiteColor;
-            state.currentRedCell = null;
-            flag.countClickRed = true;
+        if (!flag.endPointClicked) {
+            let cellDiv = event.target;
+            if (state.currentRedCell === null && flag.countClickRed) {
+                endPoint(matrixContainer, state, flag);
+            } else {
+                cellDiv.style.backgroundColor = colors.whiteColor;
+                state.currentRedCell = null;
+                flag.countClickRed = true;
+            }
         }
+        flag.endPointClicked = true;
     });
 }
 

@@ -14,5 +14,7 @@ export const colors = {
 
 export const flag = {
     countClickGreen: true,
-    countClickRed: true
+    countClickRed: true,
+    startPointClicked: false,
+    endPointClicked: false
 }
