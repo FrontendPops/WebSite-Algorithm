@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="gen.css">
+    <link rel="stylesheet" href="background.css">
+    <link type="image/x-icon" href="/image/thomas.jpg" rel="shortcut icon">
+    <link href='https://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+    <title>Генетика</title>
+</head>
+
+<body>
+    <section class="wrapper">
+        <div id="stars"></div>
+        <div id="stars2"></div>
+        <div id="stars3"></div>
+    </section>
+    <section class="content">
+        <div class="container">
+            <div class="canvas_container">
+                <canvas id="canvas" class="canvas-border" width="500" height="400"></canvas>
+            </div>
+            <div class="btn_container">
+                <button id="startBtn" class="button">
+                    Запуск
+                    <div class="hoverEffect">
+                        <div>
+                        </div>
+                    </div>
+                </button>
+                <button id="clearBtn" class="button">
+                    Стереть все
+                    <div class="hoverEffect">
+                        <div>
+                        </div>
+                    </div>
+                </button>
+                <button id="createPoints" class="button">
+                    Установить вершины
+                    <div class="hoverEffect">
+                        <div>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </section>
+    <script type="module" src="construction.js"></script>
+</body>
+
+</html>
