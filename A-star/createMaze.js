@@ -1,4 +1,4 @@
-export function createWalls(matrixSize) {
+export const createWalls = (matrixSize) => {
     const width = matrixSize * 2 + 1;
     const height = matrixSize * 2 + 1;
     const maze = [];
@@ -37,7 +37,7 @@ export function createWalls(matrixSize) {
     return maze;
 }
 
-function shuffleDirections() {
+const shuffleDirections = () => {
     const directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];
     for (let i = directions.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));

@@ -9,7 +9,9 @@ export const colors = {
     whiteColor: '#FFFFFF',
     blackColor: '#000000',
     greenColor: '#00FF00',
-    redColor: '#FF0000'
+    redColor: '#FF0000',
+    lemonColor: '#FFFACD',
+    pinkColor: '#FF1493'
 };
 
 export const flag = {
@@ -17,4 +19,4 @@ export const flag = {
     countClickRed: true,
     startPointClicked: false,
     endPointClicked: false
-}
+};

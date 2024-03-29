@@ -1,5 +1,6 @@
 import { createWalls } from "./createMaze.js";
 import { containerWidth, state, colors, flag } from "./constants.js";
+import { findWayAlgorithm } from "./algorithmFindWay.js"
 
 const createMaze = () => {
     document.getElementById("startPoint").removeEventListener("click", startPoint);
@@ -17,57 +18,30 @@ const createMaze = () => {
     const matrixContainer = document.getElementById('container');
     matrixContainer.innerHTML = '';
     let matrixArray = [];
+
     let maze = createWalls(matrixSize);
 
-    for (let i = 0; i < matrixSize; i++) {
-        let rowArray = [];
-        for (let j = 0; j < matrixSize; j++) {
-            rowArray.push(0);
-            let cellDiv = createCellDiv(i, j, sizeSquare, maze[i][j], matrixSize);
-            matrixContainer.appendChild(cellDiv);
+    cellColorChange(matrixSize, maze, sizeSquare, matrixArray, matrixContainer, state, flag, -1, -1, -1);
 
-            cellDiv.addEventListener('click', function () {
-                if (cellDiv.style.backgroundColor === 'rgb(0, 0, 0)') {
-                    cellDiv.style.backgroundColor = colors.whiteColor;
-                    rowArray[j] = 0;
-                } else if (cellDiv.style.backgroundColor === 'rgb(0, 255, 0)') {
-                    cellDiv.style.backgroundColor = colors.whiteColor;
-                    rowArray[j] = 0;
-                    state.currentGreenCell = null;
-                    flag.countClickGreen = true;
-                } else if (cellDiv.style.backgroundColor === 'rgb(255, 0, 0)') {
-                    cellDiv.style.backgroundColor = colors.whiteColor;
-                    rowArray[j] = 0;
-                    state.currentRedCell = null;
-                    flag.countClickRed = true;
-                } else {
-                    cellDiv.style.backgroundColor = colors.blackColor;
-                    rowArray[j] = 1;
-                }
-            });
-        }
-        matrixArray.push(rowArray);
-    }
     document.getElementById("startPoint").addEventListener("click", function (event) {
         if (!flag.startPointClicked) {
             let cellDiv = event.target;
             if (state.currentGreenCell === null && flag.countClickGreen) {
-                startPoint(matrixContainer, state, flag);
+                startPoint(matrixSize, matrixContainer, state, flag, matrixArray);
             } else {
                 cellDiv.style.backgroundColor = colors.whiteColor;
                 state.currentGreenCell = null;
                 flag.countClickGreen = true;
             }
-            flag.startPointClicked = true;
         }
-
+        flag.startPointClicked = true;
     });
 
     document.getElementById("endPoint").addEventListener("click", function (event) {
         if (!flag.endPointClicked) {
             let cellDiv = event.target;
             if (state.currentRedCell === null && flag.countClickRed) {
-                endPoint(matrixContainer, state, flag);
+                endPoint(matrixSize, matrixContainer, state, flag, matrixArray);
             } else {
                 cellDiv.style.backgroundColor = colors.whiteColor;
                 state.currentRedCell = null;
@@ -76,11 +50,42 @@ const createMaze = () => {
         }
         flag.endPointClicked = true;
     });
+
+    document.getElementById("findWay").addEventListener("click", function() {
+        findWay(matrixArray, start, end, matrixSize, maze, sizeSquare, matrixContainer, state, flag);
+    });
 }
 
 document.getElementById("create").addEventListener("click", createMaze);
 
-function createCellDiv(i, j, sizeSquare, cellType) {
+
+const findWay = (matrixArray, start, end, matrixSize, maze, sizeSquare, matrixContainer, state, flag) => {
+
+    
+    for(let i = 0; i < matrixSize; i++) {
+        for (let j = 0; j < matrixSize; j++) {
+            if (matrixArray[i][j] === 2) {
+                start.x = i;
+                start.y = j;
+            }
+            if (matrixArray[i][j] === 3) {
+                end.x = i;
+                end.y = j;
+            }
+        }
+    }
+    console.log(matrixArray);
+
+    console.log(start, end);
+    //let findWay = findWayAlgorithm(matrixArray, matrixSize, maze, sizeSquare, matrixContainer, state, flag);
+    console.log(findWay);
+
+    for (let i = 1; i < findWay.length - 1; i++) {
+        cellColorChange(matrixSize, maze, sizeSquare, matrixArray, matrixContainer, state, flag, findWay[i].x, findWay[i].y, 1);
+    }
+}
+
+const createCellDiv = (i, j, sizeSquare, cellType) => {
     const cellDiv = document.createElement('div');
     cellDiv.className = 'cell';
     cellDiv.style.width = `${sizeSquare}px`;
@@ -97,31 +102,94 @@ function createCellDiv(i, j, sizeSquare, cellType) {
     return cellDiv;
 }
 
-function startPoint(matrixContainer, state, flag) {
+const startPoint = (matrixSize, matrixContainer, state, flag, maze) => {
+    document.getElementById("startPoint").removeEventListener("click", startPoint);
     const cellDivs = matrixContainer.querySelectorAll('.cell');
+
     cellDivs.forEach((cellDiv, index) => {
         cellDiv.addEventListener('click', function () {
             if (cellDiv.style.backgroundColor === 'rgb(0, 0, 0)' && flag.countClickGreen) {
                 cellDiv.style.backgroundColor = colors.greenColor;
                 state.currentGreenCell = cellDiv;
-                matrixContainer[index] = 2;
+                const rowIndex = Math.floor(index / matrixSize);
+                const colIndex = index % matrixSize;
+                maze[rowIndex][colIndex] = 2;
                 flag.countClickGreen = false;
             }
         });
     });
 }
 
-function endPoint(matrixContainer, state, flag) {
-    document.getElementById("startPoint").removeEventListener("click", startPoint);
+const endPoint = (matrixSize, matrixContainer, state, flag, maze) => {
+    document.getElementById("endPoint").removeEventListener("click", startPoint);
     const cellDivs = matrixContainer.querySelectorAll('.cell');
+
     cellDivs.forEach((cellDiv, index) => {
         cellDiv.addEventListener('click', function () {
             if (cellDiv.style.backgroundColor === 'rgb(0, 0, 0)' && flag.countClickRed) {
                 cellDiv.style.backgroundColor = colors.redColor;
                 state.currentRedCell = cellDiv;
-                matrixContainer[index] = 3;
+                const rowIndex = Math.floor(index / matrixSize);
+                const colIndex = index % matrixSize;
+                maze[rowIndex][colIndex] = 3;
                 flag.countClickRed = false;
             }
         });
     });
 }
+
+export const cellColorChange = (matrixSize, maze, sizeSquare, matrixArray, matrixContainer, state, flag, x, y, castle) => {
+    for (let i = 0; i < matrixSize; i++) {
+        let rowArray = [];
+        for (let j = 0; j < matrixSize; j++) {
+            rowArray.push(maze[i][j]);
+            let cellDiv = createCellDiv(i, j, sizeSquare, maze[i][j]);
+            matrixContainer.appendChild(cellDiv);
+
+            if (x !== -1 && y !== -1 && castle !== 1) {
+                if (i === y && j === x) {
+                    cellDiv.style.backgroundColor = colors.lemonColor;
+                }
+                
+                
+            } else if (castle === 1) {
+                if (i === y && j === x) {
+                    cellDiv.style.backgroundColor = colors.pinkColor;
+                }
+
+            } else {
+                cellDiv.addEventListener('click', function () {
+                    if (cellDiv.style.backgroundColor === 'rgb(0, 0, 0)') {
+                        cellDiv.style.backgroundColor = colors.whiteColor;
+                        rowArray[j] = 0;
+                    } else if (cellDiv.style.backgroundColor === 'rgb(0, 255, 0)') {
+                        cellDiv.style.backgroundColor = colors.whiteColor;
+                        rowArray[j] = 0;
+                        state.currentGreenCell = null;
+                        flag.countClickGreen = true;
+                    } else if (cellDiv.style.backgroundColor === 'rgb(255, 0, 0)') {
+                        cellDiv.style.backgroundColor = colors.whiteColor;
+                        rowArray[j] = 0;
+                        state.currentRedCell = null;
+                        flag.countClickRed = true;
+                    } else {
+                        cellDiv.style.backgroundColor = colors.blackColor;
+                        rowArray[j] = 1;
+                    }
+                });
+            }
+            
+        }
+        matrixArray.push(rowArray);
+    }
+};
+
+export const start = {
+    x: 0,
+    y: 0
+};
+
+export const end = {
+    x: 0,
+    y: 0
+};
