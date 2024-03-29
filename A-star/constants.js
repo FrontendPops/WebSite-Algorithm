@@ -20,3 +20,4 @@ export const flag = {
     startPointClicked: false,
     endPointClicked: false
 };
+
