@@ -1,9 +1,14 @@
-import { start, end } from "./app.js";
+//import { start, end } from "./app.js";
 import { colors } from "./constants.js"
 
-export const findWayAlgorithm = (matrixSize, matrixArray, matrixContainer) => {
+export const findWayAlgorithm = (matrixSize, matrixArray, matrixContainer, start, end) => {
     const startNode = new NodeCell(null, start.x, start.y);
     const endNode = new NodeCell(null, end.x, end.y);
+
+    console.log("MATRIXXXXXX", matrixArray);
+
+    console.log("start in find:", start.x, start.y);
+    console.log("end in find:", end.x, end.y);
 
     startNode.F = 0;
     startNode.G = 0;
@@ -14,16 +19,15 @@ export const findWayAlgorithm = (matrixSize, matrixArray, matrixContainer) => {
 
     const possibleCell = [startNode];
     const passedCell = [];
+    const way = [];
 
     while (possibleCell.length > 0) {
         let currentNode = possibleCell[0];
         let currentIndex = 0;
 
-        // Убедимся, что addedNeighbors корректно отражает соседние узлы, добавленные в possibleCell
         const addedNeighbors = possibleCell.map(cell => cell !== currentNode);
 
         if (currentNode.position.x === endNode.position.x && currentNode.position.y === endNode.position.y) {
-            const way = [];
             let current = currentNode;
             while (current !== null) {
                 way.push(current.position);
@@ -38,13 +42,14 @@ export const findWayAlgorithm = (matrixSize, matrixArray, matrixContainer) => {
         if (addedNeighbors.every(neighbor => neighbor)) {
             possibleCell.splice(currentIndex, 1);
             passedCell.push(currentNode);
-            continue; // Переходим к следующей итерации цикла
+            continue;
         }
 
         possibleCell.splice(currentIndex, 1);
         passedCell.push(currentNode);
 
         const children = [];
+
         const newPositions = [
             [0, -1],
             [-1, 0],
@@ -65,11 +70,13 @@ export const findWayAlgorithm = (matrixSize, matrixArray, matrixContainer) => {
                 continue;
             }
             const newNode = new NodeCell(currentNode, nodePosition.x, nodePosition.y);
+
             children.push(newNode);
         }
 
         for (let child of children) {
             let skipChild = false;
+
             for (let currentChild of passedCell) {
                 if (child.isEqual(currentChild)) {
                     skipChild = true;
@@ -83,6 +90,7 @@ export const findWayAlgorithm = (matrixSize, matrixArray, matrixContainer) => {
             child.F = child.G + child.H;
         
             let found = false;
+
             for (let i = 0; i < possibleCell.length; i++) {
                 const possibleCellNode = possibleCell[i];
                 if (child.isEqual(possibleCellNode)) {
@@ -100,6 +108,7 @@ export const findWayAlgorithm = (matrixSize, matrixArray, matrixContainer) => {
                 possibleCell.push(child);
             } else {
                 const index = possibleCell.findIndex(node => node.isEqual(child));
+
                 if (child.G < possibleCell[index].G) {
                     possibleCell[index].G = child.G;
                     possibleCell[index].F = child.F;
@@ -130,18 +139,26 @@ const heuristic = (firstElement, secondElement) => {
 };
 
 const updateColorCell = (matrixSize, matrixContainer, matrixArray, x, y) => {
+    const lemonCells = matrixContainer.querySelectorAll('.cell[style="background-color: ' + colors.lemonColor + '"]');
+    lemonCells.forEach(cell => cell.remove());
+
     if (matrixArray[x][y] !== 2 && matrixArray[x][y] !== 3) {
+        if (matrixArray[x][y] === 1) {
+            return; 
+        }
         const cellDivs = matrixContainer.querySelectorAll('.cell');
+        let delay = 5;
         for (let i = 0; i < cellDivs.length; i++) {
             const cellDiv = cellDivs[i];
             const cellX = i % matrixSize;
             const cellY = Math.floor(i / matrixSize);
 
-            if (cellX === y && cellY === x) {
-                cellDiv.style.backgroundColor = colors.lemonColor;
-                return;
-            }
+            setTimeout(() => {
+                if (cellX === y && cellY === x) {
+                    cellDiv.style.backgroundColor = colors.lemonColor;
+                }
+            }, delay);
+            delay += 5;
         }
     }
-
 }
