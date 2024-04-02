@@ -9,6 +9,7 @@
     max-width: 1600px;
     text-align: center;
     width: 100%;
+    font-size: 100%;
 }
 
 .header {
@@ -52,4 +53,117 @@
 .button {
     margin-top: 30px;
     padding: 10px 15px;
+}
+
+@media screen and (min-width: 1201px) {
+    .title {
+        text-align: center;
+        width: 100%;
+        font-size: 100%;
+    }
+
+    .head {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        font-size: 100%;
+    }
+
+    .input {
+        margin-left: 5px;
+        font-size: 100%;
+    }
+
+    .button {
+        margin-top: 30px;
+        padding: 10px 15px;
+        font-size: 100%;
+    }
+
+    .container {
+        margin-top: 5%;
+        width: 500px;
+        height: 500px;
+        border: 1px solid black;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+@media screen and (min-width: 800px) and (max-width: 1200px) {
+    .title {
+        max-width: 1600px;
+        text-align: center;
+        width: 100%;
+        font-size: 60%;
+    }
+
+    .head {
+        margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        font-size: 60%;
+    }
+
+    .input {
+        margin-left: 5px;
+        font-size: 60%;
+    }
+
+    .button {
+        margin-top: 15px;
+        padding: 5px 8px;
+        font-size: 60%;
+    }
+
+    .container {
+        margin-top: 5%;
+        width: 500px;
+        height: 500px;
+        border: 1px solid black;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+@media screen and (min-width: 450px) and (max-width: 799px) {
+    .title {
+        max-width: 1600px;
+        text-align: center;
+        width: 100%;
+        font-size: 40%;
+    }
+
+    .head {
+        margin-top: 15px;
+        display: flex;
+        justify-content: center;
+        font-size: 40%;
+    }
+
+    .input {
+        margin-left: 5px;
+        font-size: 40%;
+    }
+
+    .button {
+        margin-top: 15px;
+        padding: 2px 4px;
+        font-size: 40%;
+    }
+
+    .container {
+        margin-top: 5%;
+        width: 450px;
+        height: 450px;
+        border: 1px solid black;
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
 }

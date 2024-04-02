@@ -1,6 +1,15 @@
+const shuffleDirections = () => {
+    const directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+    for (let i = directions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [directions[i], directions[j]] = [directions[j], directions[i]];
+    }
+    return directions;
+}
+
 export const createWalls = (matrixSize) => {
-    const width = matrixSize * 2 + 1;
-    const height = matrixSize * 2 + 1;
+    const width = matrixSize;
+    const height = matrixSize;
     const maze = [];
 
     for (let i = 0; i < width; i++) {
@@ -37,11 +46,3 @@ export const createWalls = (matrixSize) => {
     return maze;
 }
 
-const shuffleDirections = () => {
-    const directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];
-    for (let i = directions.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [directions[i], directions[j]] = [directions[j], directions[i]];
-    }
-    return directions;
-}

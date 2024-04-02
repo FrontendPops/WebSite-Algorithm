@@ -1,14 +1,52 @@
-//import { start, end } from "./app.js";
 import { colors } from "./constants.js"
+
+const updateColorCell = (matrixSize, matrixContainer, matrixArray, x, y) => {
+    const lemonCells = matrixContainer.querySelectorAll('.cell[style="background-color: ' + colors.lemonColor + '"]');
+    lemonCells.forEach(cell => cell.remove());
+
+    if (matrixArray[x][y] !== 2 && matrixArray[x][y] !== 3) {
+        if (matrixArray[x][y] === 1) {
+            return; 
+        }
+        const cellDivs = matrixContainer.querySelectorAll('.cell');
+        let delay = 5;
+        for (let i = 0; i < cellDivs.length; i++) {
+            const cellDiv = cellDivs[i];
+            const cellX = i % matrixSize;
+            const cellY = Math.floor(i / matrixSize);
+
+            setTimeout(() => {
+                if (cellX === y && cellY === x) {
+                    cellDiv.style.backgroundColor = colors.lemonColor;
+                }
+            }, delay);
+            delay += 5;
+        }
+    }
+}
+
+class NodeCell {
+    constructor(parents = null, x = null, y = null) {
+        this.parent = parents;
+        this.position = { x, y };
+        this.G = 0;
+        this.H = 0;
+        this.F = 0;
+    }
+
+    isEqual(other) {
+        return this.position.x === other.position.x && this.position.y === other.position.y;
+    }
+}
+
+const heuristic = (firstElement, secondElement) => {
+    return Math.abs(firstElement.position.x - secondElement.position.x) +
+           Math.abs(firstElement.position.y - secondElement.position.y);
+};
 
 export const findWayAlgorithm = (matrixSize, matrixArray, matrixContainer, start, end) => {
     const startNode = new NodeCell(null, start.x, start.y);
     const endNode = new NodeCell(null, end.x, end.y);
-
-    console.log("MATRIXXXXXX", matrixArray);
-
-    console.log("start in find:", start.x, start.y);
-    console.log("end in find:", end.x, end.y);
 
     startNode.F = 0;
     startNode.G = 0;
@@ -118,47 +156,3 @@ export const findWayAlgorithm = (matrixSize, matrixArray, matrixContainer, start
         }
     }
 };
-
-class NodeCell {
-    constructor(parents = null, x = null, y = null) {
-        this.parent = parents;
-        this.position = { x, y };
-        this.G = 0;
-        this.H = 0;
-        this.F = 0;
-    }
-
-    isEqual(other) {
-        return this.position.x === other.position.x && this.position.y === other.position.y;
-    }
-}
-
-const heuristic = (firstElement, secondElement) => {
-    return Math.abs(firstElement.position.x - secondElement.position.x) +
-           Math.abs(firstElement.position.y - secondElement.position.y);
-};
-
-const updateColorCell = (matrixSize, matrixContainer, matrixArray, x, y) => {
-    const lemonCells = matrixContainer.querySelectorAll('.cell[style="background-color: ' + colors.lemonColor + '"]');
-    lemonCells.forEach(cell => cell.remove());
-
-    if (matrixArray[x][y] !== 2 && matrixArray[x][y] !== 3) {
-        if (matrixArray[x][y] === 1) {
-            return; 
-        }
-        const cellDivs = matrixContainer.querySelectorAll('.cell');
-        let delay = 5;
-        for (let i = 0; i < cellDivs.length; i++) {
-            const cellDiv = cellDivs[i];
-            const cellX = i % matrixSize;
-            const cellY = Math.floor(i / matrixSize);
-
-            setTimeout(() => {
-                if (cellX === y && cellY === x) {
-                    cellDiv.style.backgroundColor = colors.lemonColor;
-                }
-            }, delay);
-            delay += 5;
-        }
-    }
-}

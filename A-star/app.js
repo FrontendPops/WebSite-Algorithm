@@ -2,23 +2,6 @@ import { createWalls } from "./createMaze.js";
 import { containerWidth, state, colors, flag } from "./constants.js";
 import { findWayAlgorithm } from "./algorithmFindWay.js"
 
-const createCellDiv = (i, j, sizeSquare, cellType) => {
-    const cellDiv = document.createElement('div');
-    cellDiv.className = 'cell';
-    cellDiv.style.width = `${sizeSquare}px`;
-    cellDiv.style.height = `${sizeSquare}px`;
-
-    cellDiv.style.backgroundColor = cellType === 1 ? colors.blackColor : colors.whiteColor;
-
-    const leftPos = sizeSquare * j;
-    const topPos = sizeSquare * i;
-
-    cellDiv.style.left = `${leftPos}px`;
-    cellDiv.style.top = `${topPos}px`;
-
-    return cellDiv;
-}
-
 const startPoint = (matrixSize, matrixContainer, state, flag, array, start) => {
     const cellDivs = matrixContainer.querySelectorAll('.cell');
     cellDivs.forEach((cellDiv, index) => {
@@ -36,7 +19,6 @@ const startPoint = (matrixSize, matrixContainer, state, flag, array, start) => {
         });
     });
     flag.startPointClicked = true;
-    console.log("befor start point", array);
 }
 
 const endPoint = (matrixSize, matrixContainer, state, flag, array, end) => {
@@ -56,46 +38,53 @@ const endPoint = (matrixSize, matrixContainer, state, flag, array, end) => {
         });
     });
     flag.endPointClicked = true;
-    console.log("befor end point", array);
 }
 
-export const cellColorChange = (matrixSize, maze, sizeSquare, matrixContainer, state, flag) => {
-    let matrixArray = [];
+const cellColorChange = (matrixSize, maze, sizeSquare, matrixContainer, state, flag) => {
     for (let i = 0; i < matrixSize; i++) {
-        let rowArray = [];
         for (let j = 0; j < matrixSize; j++) {
-            rowArray.push(maze[i][j]);
-            let cellDiv = createCellDiv(i, j, sizeSquare, maze[i][j]);
-            matrixContainer.appendChild(cellDiv);
+            const cellDiv = document.createElement('div');
+            cellDiv.className = 'cell';
+            cellDiv.style.width = `${sizeSquare}px`;
+            cellDiv.style.height = `${sizeSquare}px`;
 
-            cellDiv.addEventListener('click', function () {
+            cellDiv.style.backgroundColor = maze[i][j] === 1 ? colors.blackColor : colors.whiteColor;
+
+            const leftPos = sizeSquare * j;
+            const topPos = sizeSquare * i;
+
+            cellDiv.style.left = `${leftPos}px`;
+            cellDiv.style.top = `${topPos}px`;
+
+            cellDiv.addEventListener('click', function (event) {
                 if (cellDiv.style.backgroundColor === 'rgb(0, 0, 0)') {
                     cellDiv.style.backgroundColor = colors.whiteColor;
-                    rowArray[j] = 0;
+                    maze[i][j] = 0;
                 } else if (cellDiv.style.backgroundColor === 'rgb(0, 255, 0)') {
                     cellDiv.style.backgroundColor = colors.whiteColor;
-                    rowArray[j] = 0;
+                    maze[i][j] = 0;
                     state.currentGreenCell = null;
                     flag.countClickGreen = true;
                 } else if (cellDiv.style.backgroundColor === 'rgb(255, 0, 0)') {
                     cellDiv.style.backgroundColor = colors.whiteColor;
-                    rowArray[j] = 0;
+                    maze[i][j] = 0;
                     state.currentRedCell = null;
                     flag.countClickRed = true;
                 } else {
                     cellDiv.style.backgroundColor = colors.blackColor;
-                    rowArray[j] = 1;
+                    maze[i][j] = 1;
                 }
+                event.stopPropagation();
             });
+            matrixContainer.appendChild(cellDiv);
         }
-        matrixArray[i] = rowArray;
     }
-    return matrixArray;
 };
 
 const finalyChangeColor = (matrixSize, matrixContainer, x, y) => {
+    clearPreviousPath(matrixContainer);
     const cellDivs = matrixContainer.querySelectorAll('.cell');
-    let delay = 10;
+    let delay = 13;
     for (let i = 0; i < cellDivs.length; i++) {
         const cellDiv = cellDivs[i];
         const cellX = i % matrixSize;
@@ -106,7 +95,7 @@ const finalyChangeColor = (matrixSize, matrixContainer, x, y) => {
                 cellDiv.style.backgroundColor = colors.pinkColor;
             }
         }, delay);
-        delay += 10;
+        delay += 13;
     }
 }
 
@@ -115,7 +104,7 @@ const clearPreviousPath = (matrixContainer) => {
 
     for (let i = 0; i < cellDivs.length; i++) {
         const cellDiv = cellDivs[i];
-        if (cellDiv.style.backgroundColor === colors.pinkColor || cellDiv.style.backgroundColor === colors.lemonColor || 
+        if (cellDiv.style.backgroundColor === colors.pinkColor || cellDiv.style.backgroundColor === colors.lemonColor ||
             cellDiv.style.backgroundColor === colors.greenColor || cellDiv.style.backgroundColor === colors.redColor) {
             cellDiv.style.backgroundColor = colors.whiteColor;
         }
@@ -130,10 +119,6 @@ const createMaze = () => {
     let start = { x: 0, y: 0 };
     let end = { x: 0, y: 0 };
 
-    console.log("start:", start.x, start.y);
-    console.log("end:", end.x, end.y);
-
-
     flag.startPointClicked = false;
     flag.endPointClicked = false;
     flag.countClickGreen = true;
@@ -147,22 +132,17 @@ const createMaze = () => {
     const matrixContainer = document.getElementById('container');
 
     matrixContainer.innerHTML = '';
+    let maze = [];
+    maze = createWalls(matrixSize);
 
-    let maze = createWalls(matrixSize);
-
-    let matrixArray = [];
-
-    //let matrixArray = createMatrixArray(matrixSize);
-
-    matrixArray = cellColorChange(matrixSize, maze, sizeSquare, matrixContainer, state, flag);
-
-    console.log(matrixArray);
+    cellColorChange(matrixSize, maze, sizeSquare, matrixContainer, state, flag);
 
     const startEvent = (event) => {
         if (!flag.startPointClicked) {
             let cellDiv = event.target;
+            let index = Array.from(cellDiv.parentNode.children).indexOf(cellDiv);
             if (state.currentGreenCell === null && flag.countClickGreen) {
-                startPoint(matrixSize, matrixContainer, state, flag, matrixArray, start);
+                startPoint(matrixSize, matrixContainer, state, flag, maze, start, index);
             } else {
                 cellDiv.style.backgroundColor = colors.whiteColor;
                 state.currentGreenCell = null;
@@ -172,15 +152,15 @@ const createMaze = () => {
                 maze[rowIndex][colIndex] = 0;
             }
         }
-        //flag.startPointClicked = true;
         document.getElementById("startPoint").removeEventListener("click", startEvent);
     }
 
     const endEvent = (event) => {
         if (!flag.endPointClicked) {
             let cellDiv = event.target;
+            let index = Array.from(cellDiv.parentNode.children).indexOf(cellDiv);
             if (state.currentRedCell === null && flag.countClickRed) {
-                endPoint(matrixSize, matrixContainer, state, flag, matrixArray, end);
+                endPoint(matrixSize, matrixContainer, state, flag, maze, end, index);
             } else {
                 cellDiv.style.backgroundColor = colors.whiteColor;
                 state.currentRedCell = null;
@@ -191,27 +171,19 @@ const createMaze = () => {
             }
         }
         document.getElementById("endPoint").removeEventListener("click", endEvent);
-        //flag.endPointClicked = true;
     }
 
     const findEvent = () => {
         let way = [];
         if (!flag.countClickRed && !flag.countClickGreen) {
-            console.log('Start:', start);
-            console.log('End:', end);
-    
-            console.log(matrixArray);
-        
-            console.log(start, end);
-            way = findWayAlgorithm(matrixSize, matrixArray, matrixContainer, start, end);
-    
-            console.log("way", way);
-        
+            way = findWayAlgorithm(matrixSize, maze, matrixContainer, start, end);
+
             for (let i = 1; i < way.length - 1; i++) {
                 finalyChangeColor(matrixSize, matrixContainer, way[i].x, way[i].y);
             }
         }
-        document.getElementById("findWay").removeEventListener("click", findWay);
+        way = [];
+        document.getElementById("findWay").removeEventListener("click", findEvent);
     }
 
     document.getElementById("startPoint").addEventListener("click", startEvent);
@@ -222,6 +194,3 @@ const createMaze = () => {
 }
 
 document.getElementById("create").addEventListener("click", createMaze);
-
-
-
