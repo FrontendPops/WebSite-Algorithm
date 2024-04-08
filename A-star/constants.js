@@ -1,4 +1,5 @@
-export const containerWidth = 500;
+const container = document.querySelector('.container');
+export const containerWidth = parseInt(getComputedStyle(container).getPropertyValue('--container-width'));
 
 export const state = {
     currentGreenCell: null,
