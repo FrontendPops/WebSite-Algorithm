@@ -2,6 +2,7 @@ const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
 let pointList = [];
+let tempPointList;
 
 canvas.addEventListener('mousedown', (event) => {
 	const rect = canvas.getBoundingClientRect();
@@ -13,9 +14,61 @@ canvas.addEventListener('mousedown', (event) => {
 	drawPoints();
 });
 
+// Функция для определения ориентации троек точек (p, q, r)
+// Возвращает значение > 0, если p-q-r образуют левый поворот,
+// значение < 0 для правого поворота и 0, если точки коллинеарны.
+function orientation(p, q, r) {
+  return (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+}
+
+// Функция для сортировки точек по углу, образованному с горизонтальной осью и начальной точкой p0
+function compare(p0, p1, p2) {
+  const val = (p1.y - p0.y) * (p2.x - p1.x) - (p1.x - p0.x) * (p2.y - p1.y);
+  if (val === 0) {
+      return Math.sqrt((p1.x - p0.x) ** 2 + (p1.y - p0.y) ** 2) - Math.sqrt((p2.x - p0.x) ** 2 + (p2.y - p0.y) ** 2);
+  }
+  return val;
+}
+
+// Основная функция поиска выпуклой оболочки
+function convexHull(points) {
+  const n = points.length;
+  if (n < 3) return points; // Не хватает точек для образования выпуклой оболочки
+
+  // Находим начальную точку с минимальным y
+  let minY = Infinity;
+  let minIndex = -1;
+  for (let i = 0; i < n; i++) {
+      if (points[i].y < minY || (points[i].y === minY && points[i].x < points[minIndex].x)) {
+          minY = points[i].y;
+          minIndex = i;
+      }
+  }
+
+  // Меняем начальную точку с точкой с индексом 0
+  [points[0], points[minIndex]] = [points[minIndex], points[0]];
+
+  // Сортируем оставшиеся точки по углу, образованному с начальной точкой
+  points.sort((a, b) => compare(points[0], a, b));
+
+  const stack = [points[0], points[1]]; // Инициализируем стек с первыми двумя отсортированными точками
+
+  // Проходим через остальные точки и строим выпуклую оболочку
+  for (let i = 2; i < n; i++) {
+      let top = stack.length - 1;
+      while (top > 0 && orientation(stack[top - 1], stack[top], points[i]) >= 0) {
+          // Удаляем точки, образующие не выпуклый угол
+          stack.pop();
+          top--;
+      }
+      stack.push(points[i]);
+  }
+  stack.push(points[0]);
+  return stack;
+}
+
 function drawPoints() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
-
 	
 	for (let point of pointList) {
     ctx.fillStyle = '#0';
@@ -31,32 +84,37 @@ function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }
 
-function compareCentroids(a, b) {
-  for (let i = 0; i < a.length; i++) {
-    if (a[i] !== b[i]) {
-      return false;
+function regionQuery(point, eps) {
+  var neighbors = [];
+  for (var i = 0; i < pointList.length; i++) {
+    if (distance(point, tempPointList[i]) <= eps) {
+      neighbors.push(tempPointList[i]);
     }
   }
-  return true;
+  return neighbors;
+}
+
+function getCentroids(pointList, k) {
+  let centroids = [];
+
+  for (let i = 0; i < k; i++) {
+    while (true) {
+      let checked = true;
+      centroidCandidate = pointList[getRandomInt(pointList.length)];
+      for (let j = 0; j < centroids.length; j++) {
+        if (centroidCandidate.x == centroids[j].x ||centroidCandidate.xy == centroids[j].y) checked = false;
+      }
+      if (checked) break;
+    }
+    centroids.push(centroidCandidate);
+  }
+  return centroids;
 }
   
-function initializeClusters(pointList, k) {
+function initializeClusters(pointList, k, centroids) {
     let clusters = [];
-    let centroids = [];
 
     for (let i = 0; i < k; i++) {
-      while (true) {
-        let checked = true;
-        centroidCandidate = pointList[getRandomInt(pointList.length)];
-        for (let j = 0; j < centroids.length; j++) {
-          if (centroidCandidate.x == centroids[j].x ||centroidCandidate.xy == centroids[j].y) checked = false;
-        }
-        if (checked) break;
-      }
-      centroids.push(centroidCandidate);
-    }
-    for (let i = 0; i < k; i++) {
-
       let newCluster = {
         index: i,
         points: [
@@ -68,7 +126,6 @@ function initializeClusters(pointList, k) {
           y: centroids[i].y
         }
       };
-      console.log("CENTROID " + newCluster.centroid.x + " " + newCluster.centroid.y);
       clusters.push(newCluster);
     }
 
@@ -88,7 +145,6 @@ function initializeClusters(pointList, k) {
 }
   
 function updateClusters(clusters, pointList) {
-
   const newClusters = clusters.map(cluster => ({
     index: cluster.index,
     points: [],
@@ -98,7 +154,6 @@ function updateClusters(clusters, pointList) {
     }
   }));
   
-
   for (let point of pointList) {
     let minDistance = Infinity;
     let closestClusterIndex = -1;
@@ -110,42 +165,164 @@ function updateClusters(clusters, pointList) {
         minDistance = distanceToCluster;
         closestClusterIndex = m;
       }
-    }
-      
+    }    
       newClusters[closestClusterIndex].points.push(point);
-    }
-  
+    } 
   return newClusters;
 }
   
-function drawClusters(clusters) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+function drawClustersKmeans(clusters) {
   for (let cluster of clusters) {
-    ctx.fillStyle = `hsl(${cluster.index * 360 / clusters.length}, 100%, 50%)`;
-    for (let point of cluster.points) {
-      ctx.fillRect(point.x, point.y, 10, 10);
-    }
+    ctx.fillStyle = `hsl(${cluster.index * 360 / clusters.length}, 50%, 40%)`;
+    ctx.strokeStyle = `hsl(${cluster.index * 360 / clusters.length}, 50%, 40%)`;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    let hull = convexHull(cluster.points)
 
+    for (let point of hull) {
+        // ctx.fillRect(point.x, point.y, 8, 8);
+        ctx.lineTo(point.x, point.y);
+        ctx.stroke();
+    }
+    ctx.fill();
   }
 }
   
-let input = document.querySelector('input');
-const startButton = document.getElementById('start-button');
+function drawClustersDbscan(clusters) {
+  for (let i = 0; i < clusters.length; i++) {
+    let clusterElement = clusters[i];
+    ctx.fillStyle = `hsl(${i * 360 / clusters.length}, 100%, 50%)`;
+    ctx.beginPath();
+    console.log(clusterElement);
+    for (let point of clusterElement) {
+      ctx.fillRect(point.x, point.y, 8, 8);
+    }
+  }
+}
 
-startButton.addEventListener('click', () => {
-  console.log("Starting..."); 
+function drawClustersHierarchical(clusters) {
+  for (let i = 0; i < clusters.length; i++) {
+    let cluster = clusters[i];
+    ctx.strokeStyle = `gray`;
+    ctx.lineWidth = 3;
+    ctx.setLineDash([6]);
+    ctx.beginPath();
+    let hull = convexHull(cluster)
+
+    for (let point of hull) {
+        ctx.lineTo(point.x, point.y);
+        ctx.stroke();
+    }
+  }
+  
+  ctx.setLineDash([0]);
+}
+
+function kMeans(pointList) {
+  let input = document.querySelector('input');
   let k = input.value;
   if (pointList.length >= k) {
-    let clusters = initializeClusters(pointList, k);
+    let centroids = getCentroids(pointList, k)
+    let clusters = initializeClusters(pointList, k, centroids);
     let iteration = 0;
-    let isConverged = false;
   
     while (iteration < 50) {
       clusters = updateClusters(clusters, pointList);
       iteration++;
     }
-    drawClusters(clusters);
+    drawClustersKmeans(clusters);
   }
+}
   
+function expandCluster(point, neighbors, eps, minPts) {
+  var cluster = [point];
+  for (var i = 0; i < neighbors.length; i++) {
+    if (neighbors[i].cluster === undefined) {
+      neighbors[i].cluster = cluster[0].cluster;
+      var newNeighbors = regionQuery(neighbors[i], eps);
+      if (newNeighbors.length >= minPts) {
+        cluster = cluster.concat(expandCluster(neighbors[i], newNeighbors, eps, minPts));
+      } else {
+        neighbors[i].cluster = -1;
+      }
+    }
+  }
+  return cluster;
+}
+
+function dbscan(pointList) {
+  var clusters = [];
+  tempPointList = [];
+  for (var i = 0 ; i < pointList.length; i++) { 
+    tempPointList.push({ x: pointList[i].x, y: pointList[i].y });
+  }
+
+  for (var i = 0; i < tempPointList.length; i++) {
+    if (tempPointList[i].cluster === undefined) {
+      var neighbors = regionQuery(tempPointList[i], eps);
+      if (neighbors.length >= minPts) {
+        tempPointList[i].cluster = clusters.length;
+        clusters.push(expandCluster(tempPointList[i], neighbors, eps, minPts));
+      } else {
+        tempPointList[i].cluster = -1;
+      }
+    }
+  }
+  console.log(clusters);
+  console.log("DBSCAN: " + clusters.length  + " clusters found.");
+  drawClustersDbscan(clusters);
+}
+
+function euclideanDistance(point1, point2) {
+  return Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2));
+}
+
+function hierarchicalClustering(points) {
+  // Инициализация кластеров, каждая точка изначально является отдельным кластером
+  let clusters = points.map(point => [point]);
+  let input = document.querySelector('input');
+  let k = input.value;
+
+  while (clusters.length > k) {
+      let minDistance = Infinity;
+      let closestClusters = [0, 1]; // Индексы двух ближайших кластеров
+
+      // Находим два ближайших кластера
+      for (let i = 0; i < clusters.length; i++) {
+          for (let j = i + 1; j < clusters.length; j++) {
+              let distance = 0;
+              for (let point1 of clusters[i]) {
+                  for (let point2 of clusters[j]) {
+                      distance += euclideanDistance(point1, point2);
+                  }
+              }
+              distance /= clusters[i].length * clusters[j].length;
+
+              if (distance < minDistance) {
+                  minDistance = distance;
+                  closestClusters = [i, j];
+              }
+          }
+      }
+
+      // Объединяем два ближайших кластера
+      clusters[closestClusters[0]] = clusters[closestClusters[0]].concat(clusters[closestClusters[1]]);
+      clusters.splice(closestClusters[1], 1);
+  }
+
+  drawClustersHierarchical(clusters);
+}
+
+
+var eps = 70; 
+var minPts = 4; 
+const startButton = document.getElementById('start-button');
+
+startButton.addEventListener('click', () => {
+  console.log("Starting..."); 
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  kMeans(pointList);
+  dbscan(pointList);
+  console.log(hierarchicalClustering(pointList));
 });
   
