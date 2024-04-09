@@ -1,4 +1,3 @@
-
 export function createPopulation(populationSize, vertex) {
     let population = [];
     for (let i = 0; i < populationSize; i++) {
@@ -10,46 +9,51 @@ export function createPopulation(populationSize, vertex) {
 }
 
 export function evolvePopulation(population, mutationRate, points) {
-    console.log("Mutation rate:", mutationRate);
     const newPopulation = [];
     population.sort((a, b) => calculatePathDistance(a.path, points) - calculatePathDistance(b.path, points)); // Сортируем по возрастанию длины пути
 
-    for (let i = 0; i < population.length; i++) {
-        const parentA = population[i];
-        const parentB = i % 2 === 0 ? population[i + 1] : population[i - 1]; // Выполняем турнирный отбор
+    for (let i = 0; i < population.length; i += 2) {
+        const parentFirst = population[i];
+        const parentSecond = population[i + 1]; // Берем пары родителей последовательно
 
-        // Используем дистанцию кроссовера
-        const crossoverPoint = Math.floor(Math.random() * parentA.path.length);
-        const childPath = crossover(parentA.path, parentB.path, crossoverPoint);
 
-        // Используем мутацию с вершиной кроссовера
-        mutate(childPath, mutationRate, crossoverPoint);
+        const crossoverPoint = Math.floor(Math.random() * parentFirst.length); 
 
-        // Обновляем приспособленность для потомка на основе длины его пути
-        const childFitness = calculatePathDistance(childPath, points);
-        newPopulation.push({ path: childPath, fitness: childFitness });
+        // Выполняем кроссовер
+        const [childPathFirst, childPathSecond] = crossover(parentFirst.path, parentSecond.path, crossoverPoint);
+
+        // Используем мутацию для обоих потомков
+        mutate(childPathFirst, mutationRate);
+        mutate(childPathSecond, mutationRate);
+
+        // Обновляем приспособленность для потомков на основе длины их путей
+        const childFitnessFirst = calculatePathDistance(childPathFirst, points);
+        const childFitnessSecond = calculatePathDistance(childPathSecond, points);
+        newPopulation.push({ path: childPathFirst, fitness: childFitnessFirst });
+        newPopulation.push({ path: childPathSecond, fitness: childFitnessSecond });
     }
 
     return newPopulation;
 }
 
-function crossover(parentA, parentB, crossoverPoint) {
-    const parentASlice = parentA.slice(0, crossoverPoint);
-    const parentBSlice = parentB.slice(crossoverPoint);
-
-    const childPath = [...parentASlice, ...parentBSlice];
-    return childPath;
+function crossover(parentFirst, parentSecond, crossoverPoint) {
+        const childFirst = [...parentFirst.slice(0, crossoverPoint), ...parentSecond.slice(crossoverPoint)];
+        const childSecond = [...parentSecond.slice(0, crossoverPoint), ...parentFirst.slice(crossoverPoint)];
+    
+        // Удаление повторяющихся генов из потомков
+        const newChildFirst = Array.from(new Set(childFirst));
+        const newChildSecond = Array.from(new Set(childSecond));
+    
+        return [newChildFirst, newChildSecond];
+    
 }
 
-// Мутация
-function mutate(path, mutationRate, crossoverPoint) {
+
+function mutate(path, mutationRate) {
     for (let i = 0; i < path.length; i++) {
         if (Math.random() < mutationRate) {
             const j = Math.floor(Math.random() * path.length);
-            const dist = Math.sqrt((path[i].x - path[j].x) ** 2 + (path[i].y - path[j].y) ** 2);
-            if (dist > crossoverPoint) {
-                [path[i], path[j]] = [path[j], path[i]]; // меняем местами вершины
-            }
+            [path[i], path[j]] = [path[j], path[i]]; // меняем местами вершины
         }
     }
 }
@@ -93,7 +97,7 @@ export function findBestPath(points) {
         visited[next] = true;
     }
 
-    // Реализация 2-opt алгоритма
+    // Реализация 2-opt алгоритма для оптимизации и для более вероятной точности
     let improved = true;
     while (improved) {
         improved = false;
@@ -118,7 +122,7 @@ function calculatePathDistance(path, points) {
     for (let i = 0; i < path.length - 1; i++) {
         distance += Math.sqrt((points[path[i]].x - points[path[i + 1]].x) ** 2 + (points[path[i]].y - points[path[i + 1]].y) ** 2);
     }
-    distance += Math.sqrt((points[path[path.length - 1]].x - points[path[0]].x) ** 2 + (points[path[path.length - 1]].y - points[path[0]].y) ** 2); // Return to the starting point
+    distance += Math.sqrt((points[path[path.length - 1]].x - points[path[0]].x) ** 2 + (points[path[path.length - 1]].y - points[path[0]].y) ** 2);
     return distance;
 }
 

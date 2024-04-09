@@ -2,7 +2,7 @@
       position: fixed;
       top: 0;
       left: 0;
-      height: 100vh;
+      height: 100%;
       width: 100%;
       background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
       margin: 0;
@@ -15,6 +15,7 @@
       left: 0;
       height: 100vh;
       overflow-y: auto;
+      min-width: 650px;
   }
 
   #title {
