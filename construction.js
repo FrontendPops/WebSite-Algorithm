@@ -27,29 +27,29 @@ function createPointsCanvas() {
 
 // Кнопка для запуска алгоритма
 startBtn.addEventListener('click', async function () {
-
     // мешаем вершины местами
     shuffleArray(points);
 
     // выставляем значние популяции, процент мутации и генерации
     const populationSize = 100;
-    const mutationRate = 0.05;
-    const generations = 5;
+    const mutationRate = 0.1;
+    const generations = 15;
 
     let population = createPopulation(populationSize, points.length);
 
     for (let i = 0; i < generations; i++) {
-        population = evolvePopulation(population, mutationRate);
-        const fittestIndividual = getFittestIndividual(population);
+        population = evolvePopulation(population, mutationRate, points); // передаем массив points
+        const fittestIndividual = getFittestIndividual(population, points); // передаем массив points
         bestPath = fittestIndividual.path;
         drawPath(bestPath);
-        await sleep(50);
+        await sleep(5);
     }
 
     bestPath = findBestPath(points);
     drawPath(bestPath);
     allowAddPoints = false; // Установка false, после запуска алгоритма нельзя добавлять вершины, пока не нажмется кнопка "Установить вершины"
 });
+
 
 // Кнопка очистки холста "canvas"
 clearBtn.addEventListener('click', () => {

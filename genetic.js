@@ -1,3 +1,4 @@
+
 export function createPopulation(populationSize, vertex) {
     let population = [];
     for (let i = 0; i < populationSize; i++) {
@@ -8,22 +9,25 @@ export function createPopulation(populationSize, vertex) {
     return population;
 }
 
-export function evolvePopulation(population, mutationRate) {
+export function evolvePopulation(population, mutationRate, points) {
+    console.log("Mutation rate:", mutationRate);
     const newPopulation = [];
-    population.sort((a, b) => b.fitness - a.fitness); // Делаем сортировку по приспособленности, по убыванию - вставляем в начало самых приспособленных
+    population.sort((a, b) => calculatePathDistance(a.path, points) - calculatePathDistance(b.path, points)); // Сортируем по возрастанию длины пути
 
     for (let i = 0; i < population.length; i++) {
         const parentA = population[i];
         const parentB = i % 2 === 0 ? population[i + 1] : population[i - 1]; // Выполняем турнирный отбор
 
         // Используем дистанцию кроссовера
-        const crossoverPoint = Math.floor(Math.random() * parentA.length);
+        const crossoverPoint = Math.floor(Math.random() * parentA.path.length);
         const childPath = crossover(parentA.path, parentB.path, crossoverPoint);
 
         // Используем мутацию с вершиной кроссовера
         mutate(childPath, mutationRate, crossoverPoint);
 
-        newPopulation.push({ path: childPath, fitness: 0 });
+        // Обновляем приспособленность для потомка на основе длины его пути
+        const childFitness = calculatePathDistance(childPath, points);
+        newPopulation.push({ path: childPath, fitness: childFitness });
     }
 
     return newPopulation;
@@ -37,6 +41,7 @@ function crossover(parentA, parentB, crossoverPoint) {
     return childPath;
 }
 
+// Мутация
 function mutate(path, mutationRate, crossoverPoint) {
     for (let i = 0; i < path.length; i++) {
         if (Math.random() < mutationRate) {
@@ -49,8 +54,8 @@ function mutate(path, mutationRate, crossoverPoint) {
     }
 }
 
-export function getFittestIndividual(population) {
-    return population.reduce((prev, current) => (prev.fitness > current.fitness) ? prev : current);
+export function getFittestIndividual(population, points) {
+    return population.reduce((prev, current) => calculatePathDistance(prev.path, points) < calculatePathDistance(current.path, points) ? prev : current);
 }
 
 function twoOptSwap(path, i, k) {
