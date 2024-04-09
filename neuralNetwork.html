@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="neuralNetwork.css">
+    <link rel="stylesheet" href="background.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link type="image/x-icon" href="/images/thomasan.jpg" rel="shortcut icon">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@100..800&display=swap" rel="stylesheet">
+    <title>Network</title>
+</head>
+
+<body>
+    <section class="wrapper">
+        <div id="stars"></div>
+        <div id="stars2"></div>
+        <div id="stars3"></div>
+    </section>
+    <section class="content">
+        <div class="container">
+            <p class="title">Нейронная сеть</p>
+            <div class="drawing">
+                <canvas id="canvas" class="canvas_border" width="50" height="50"></canvas>
+            </div>
+
+            <div class="predict">
+                <p>Распознанная цифра</p>
+                <div class="predictNumber" id="predictedNumber"></div>
+            </div>
+
+            <div class="buttons">
+                <div id="buttonStart" class="button_clear">
+                    <button id="buttonStart" class="button">
+                        Запуск
+                        <div class="hoverEffect">
+                            <div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+                <div id="buttonClear" class="button_clear">
+                    <button id="buttonClear" class="button">
+                        Очистить
+                        <div class="hoverEffect">
+                            <div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script type="module" src="neural.js"></script>
+</body>
+
+</html>
