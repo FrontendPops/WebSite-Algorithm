@@ -32,7 +32,7 @@ startBtn.addEventListener('click', async function () {
  
     // выставляем значние популяции, процент мутации и генерации 
     const populationSize = 1000; 
-    const mutationRate = 50; 
+    const mutationRate = 0.5; 
     const generations = 10; 
  
     let population = createPopulation(populationSize, points.length); 
