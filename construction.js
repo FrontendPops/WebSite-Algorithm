@@ -31,7 +31,7 @@ startBtn.addEventListener('click', async function () {
     shuffleArray(points); 
  
     // выставляем значние популяции, процент мутации и генерации 
-    const populationSize = 5000; 
+    const populationSize = 1000; 
     const mutationRate = 50; 
     const generations = 10; 
  
@@ -42,7 +42,7 @@ startBtn.addEventListener('click', async function () {
         const fittestIndividual = getFittestIndividual(population, points); // передаем массив points 
         bestPath = fittestIndividual.path; 
         drawPath(bestPath); 
-        await sleep(50); 
+        await sleep(10); 
     } 
  
     bestPath = findBestPath(points, population, mutationRate, generations); 
@@ -77,11 +77,11 @@ function drawPath(path) {
         context.lineTo(points[path[i]].x, points[path[i]].y); 
     } 
     context.lineTo(points[path[0]].x, points[path[0]].y); 
-    let gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height); 
-    gradient.addColorStop(0, "rgba(255, 165, 0, 1)"); 
-    gradient.addColorStop(1, "rgba(0, 255, 0, 1)"); 
+    // let gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height); 
+    // gradient.addColorStop(0, "rgba(255, 165, 0, 1)"); 
+    // gradient.addColorStop(1, "rgba(0, 255, 0, 1)"); 
     context.lineWidth = 3; 
-    context.strokeStyle = gradient; 
+    context.strokeStyle = "grey"; 
     context.stroke(); 
 } 
  
