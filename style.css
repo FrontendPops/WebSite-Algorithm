@@ -5,6 +5,8 @@ header {
   	height: 50px;
  	width: 100%;
 }
+
+
 .title {
 	font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 20px;
@@ -14,6 +16,24 @@ header {
 body {
 	margin-left: auto;
     margin-right: auto;
+}
+
+.introContainer{
+	display: flex;
+	justify-content: center;
+	height: 40px;
+	font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+	font-weight: 500;
+	text-align: center;
+}
+#sliderName{
+	font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    padding: 10px 12px;
+	text-align: center;
 }
 
 .interactive {
@@ -27,18 +47,57 @@ body {
 
 #canvas {
 	border: 1px solid #000000;
-
 }
+
 .canvasContainer {
 	width: min-content;
+	height: min-content;
+	margin-top: 20px;
+	margin-bottom: 20px;
 	margin-left: auto;
     margin-right: auto;
 
 }
+
+.inputDiv {
+	display: inline-block;
+  	height: 50px;
+ 	width: 100%;
+	
+}
+
+.sliderContainer{
+	margin-bottom: 30px;
+}
+.slider {
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    width: 40%; /* Full-width */
+    height: 25px; /* Specified height */
+    background: #d3d3d3; /* Grey background */
+    outline: none; /* Remove outline */
+    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+    transition: opacity .2s;
+}
+
+.sliderNameContainer{
+	display: flex;
+	justify-content: center;
+	height: 40px;
+}
+#sliderName{
+	font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    padding: 10px 12px;
+	text-align: center;
+}
 input {
 	display: block;
 	box-sizing:border-box;
-	width: 200px;
+	width: 20%;
 	margin-left: auto;
     margin-right: auto;
 	margin-top: 10px;
@@ -54,14 +113,13 @@ input {
 }
 
 .buttonDiv {
-	width: 300px;
 	display: flex;
 	justify-content: center;
 	margin-left: auto;
 	margin-right: auto;
 }
 button {
-	width: 200px;
+	width: 20%;
 	margin-left: 50px;
 	margin-right: auto;
 	background-color: rgba(51, 51, 51, 0.05);

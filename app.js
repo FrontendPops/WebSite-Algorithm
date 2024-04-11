@@ -1,5 +1,8 @@
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
+let canvas = document.getElementById('canvas');
+let ctx = canvas.getContext('2d');
+
+canvas.width = 500;
+canvas.height = 500;
 
 let pointList = [];
 let tempPointList;
@@ -14,14 +17,21 @@ canvas.addEventListener('mousedown', (event) => {
 	drawPoints();
 });
 
-// Функция для определения ориентации троек точек (p, q, r)
-// Возвращает значение > 0, если p-q-r образуют левый поворот,
-// значение < 0 для правого поворота и 0, если точки коллинеарны.
+window.addEventListener(`resize`, event => {
+	if (window.innerWidth <= 900) {
+    canvas.width = 300;
+    canvas.height = 300;
+  }
+  else {
+    canvas.width = 500;
+    canvas.height = 500;
+  }
+}, false);
+
 function orientation(p, q, r) {
   return (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
 }
 
-// Функция для сортировки точек по углу, образованному с горизонтальной осью и начальной точкой p0
 function compare(p0, p1, p2) {
   const val = (p1.y - p0.y) * (p2.x - p1.x) - (p1.x - p0.x) * (p2.y - p1.y);
   if (val === 0) {
@@ -30,12 +40,10 @@ function compare(p0, p1, p2) {
   return val;
 }
 
-// Основная функция поиска выпуклой оболочки
 function convexHull(points) {
   const n = points.length;
-  if (n < 3) return points; // Не хватает точек для образования выпуклой оболочки
+  if (n < 3) return points;
 
-  // Находим начальную точку с минимальным y
   let minY = Infinity;
   let minIndex = -1;
   for (let i = 0; i < n; i++) {
@@ -45,15 +53,12 @@ function convexHull(points) {
       }
   }
 
-  // Меняем начальную точку с точкой с индексом 0
   [points[0], points[minIndex]] = [points[minIndex], points[0]];
 
-  // Сортируем оставшиеся точки по углу, образованному с начальной точкой
   points.sort((a, b) => compare(points[0], a, b));
 
-  const stack = [points[0], points[1]]; // Инициализируем стек с первыми двумя отсортированными точками
+  const stack = [points[0], points[1]]; 
 
-  // Проходим через остальные точки и строим выпуклую оболочку
   for (let i = 2; i < n; i++) {
       let top = stack.length - 1;
       while (top > 0 && orientation(stack[top - 1], stack[top], points[i]) >= 0) {
@@ -173,8 +178,8 @@ function updateClusters(clusters, pointList) {
   
 function drawClustersKmeans(clusters) {
   for (let cluster of clusters) {
-    ctx.fillStyle = `hsl(${cluster.index * 360 / clusters.length}, 50%, 40%)`;
-    ctx.strokeStyle = `hsl(${cluster.index * 360 / clusters.length}, 50%, 40%)`;
+    ctx.fillStyle = `hsl(${cluster.index * 360 / clusters.length}, 60%, 70%)`;
+    ctx.strokeStyle = `hsl(${cluster.index * 360 / clusters.length}, 60%, 70%)`;
     ctx.lineWidth = 4;
     ctx.beginPath();
     let hull = convexHull(cluster.points)
@@ -251,6 +256,8 @@ function expandCluster(point, neighbors, eps, minPts) {
 }
 
 function dbscan(pointList) {
+  eps = document.getElementById("myRange").value;
+  console.log(eps);
   var clusters = [];
   tempPointList = [];
   for (var i = 0 ; i < pointList.length; i++) { 
@@ -314,7 +321,7 @@ function hierarchicalClustering(points) {
 }
 
 
-var eps = 70; 
+var eps; 
 var minPts = 4; 
 const startButton = document.getElementById('start-button');
 
@@ -323,6 +330,6 @@ startButton.addEventListener('click', () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   kMeans(pointList);
   dbscan(pointList);
-  console.log(hierarchicalClustering(pointList));
+  hierarchicalClustering(pointList);
 });
   

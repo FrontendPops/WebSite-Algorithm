@@ -10,9 +10,16 @@
     <header>
         <div class="title">Clustering algorithm</div>
     </header>
-    <div class="canvasContainer"><canvas id="canvas" height="500px" width="500px"></canvas></div>
+    <div class="introContainer">
+        <p>K-means: светлые фигуры, DBScan: яркие точки, Hierarchical: пунктир</p>
+    </div>
+    <div class="canvasContainer"><canvas id="canvas"></canvas></div>
     <div class="inputDiv">
         <input type="text" name="k" placeholder="Кол-во кластеров" maxlength="2" />
+    </div>
+    <div class="sliderNameContainer"><p id="sliderName">Расстояние до соседей (DBScan)</p></div>
+    <div class="sliderContainer">
+        <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
     </div>
     <div class="buttonDiv">
         <button id="start-button">Start</button>
