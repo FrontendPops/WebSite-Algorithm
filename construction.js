@@ -27,28 +27,31 @@ function createPointsCanvas() {
  
 // Кнопка для запуска алгоритма 
 startBtn.addEventListener('click', async function () { 
-    // мешаем вершины местами 
+    // Мешаем вершины местами 
     shuffleArray(points); 
  
-    // выставляем значние популяции, процент мутации и генерации 
+    // Выставляем значения для популяции, процента мутации и количества поколений 
     const populationSize = 1000; 
-    const mutationRate = 0.5; 
-    const generations = 10; 
- 
-    let population = createPopulation(populationSize, points.length); 
- 
-    for (let i = 0; i < generations; i++) { 
-        population = evolvePopulation(population, mutationRate, points); // передаем массив points 
-        const fittestIndividual = getFittestIndividual(population, points); // передаем массив points 
-        bestPath = fittestIndividual.path; 
-        drawPath(bestPath); 
-        await sleep(10); 
-    } 
- 
-    bestPath = findBestPath(points, population, mutationRate, generations); 
-    drawPath(bestPath); 
+    const mutationRate = 0.05; 
+    const generations = 50; 
+    console.log(generations);
+
+    // Получаем все пути на каждой итерации алгоритма
+    const allPaths = findBestPath(points, populationSize, mutationRate, generations);
+
+    // Отображаем каждый путь на холсте Canvas
+    for (let i = 0; i < allPaths.length; i++) {
+        drawPath(allPaths[i]);
+        console.log(allPaths[i])
+        await sleep(500); // Добавляем задержку для визуализации
+    }
+
+    // // Выбираем самый оптимальный путь из последней итерации и отображаем его
+    // bestPath = allPaths[allPaths.length - 1];
+    // drawPath(bestPath);
+
     allowAddPoints = false; // Установка false, после запуска алгоритма нельзя добавлять вершины, пока не нажмется кнопка "Установить вершины" 
-}); 
+});
  
  
 // Кнопка очистки холста "canvas" 
@@ -80,7 +83,7 @@ function drawPath(path) {
     // let gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height); 
     // gradient.addColorStop(0, "rgba(255, 165, 0, 1)"); 
     // gradient.addColorStop(1, "rgba(0, 255, 0, 1)"); 
-    context.lineWidth = 3; 
+    context.lineWidth = 1; 
     context.strokeStyle = "grey"; 
     context.stroke(); 
 } 
@@ -89,3 +92,4 @@ function drawPath(path) {
 function sleep(ms) { 
     return new Promise(resolve => setTimeout(resolve, ms)); 
 }
+
