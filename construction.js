@@ -40,8 +40,8 @@ startBtn.addEventListener('click', async function () {
     shuffleArray(points);
 
     // Выставляем значения для популяции, процента мутации и количества поколений  
-    const populationSize = 5000;
-    const mutationRate = 0.7;
+    const populationSize = 4000;
+    const mutationRate = 0.5;
     const generations = points.length * 10;
     console.log(generations);
 

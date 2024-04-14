@@ -31,7 +31,6 @@ export function evolvePopulation(population, tournamentSize, mutationRate, point
         } while (parentSecond === parentFirst);
 
         // Выполняем кроссовер 
-        const crossoverPoint = Math.floor(Math.random() * parentFirst.path.length);
         const [childPathFirst, childPathSecond] = crossover(parentFirst.path, parentSecond.path);
 
         // Применяем мутацию для обоих потомков 
@@ -63,7 +62,6 @@ function makeCompletePath(path, points) {
 }
 
 function crossover(parentFirst, parentSecond) {
-
     const crossoverPoint1 = Math.floor(Math.random() * parentFirst.length);
     const crossoverPoint2 = Math.floor(Math.random() * parentFirst.length);
     
