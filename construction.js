@@ -41,8 +41,8 @@ startBtn.addEventListener('click', async function () {
 
     // Выставляем значения для популяции, процента мутации и количества поколений  
     const populationSize = 4000;
-    const mutationRate = 0.5;
-    const generations = points.length * 10;
+    const mutationRate = 0.7;
+    const generations = points.length * 5;
     console.log(generations);
 
     // Получаем все пути на каждой итерации алгоритма 
