@@ -29,7 +29,7 @@ export function neuralNetwork(Biases, Weights) {
     };
 
     const sizes = Biases.map(layer => layer.length);
-    console.log(sizes);
+    // console.log(sizes);
     Biases.forEach((layerBiases, index) => {
         const size = sizes[index];
         //const nextLayerSize = index < sizes.length - 1 ? sizes[index + 1] : 0;
