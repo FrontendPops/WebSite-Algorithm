@@ -40,9 +40,9 @@ startBtn.addEventListener('click', async function () {
     shuffleArray(points);
 
     // Выставляем значения для популяции, процента мутации и количества поколений  
-    const populationSize = 5000;
-    const mutationRate = 0.9;
-    const generations = points.length * 5;
+    const populationSize = 4000;
+    const mutationRate = 0.8;
+    const generations = points.length * 3;
     console.log(generations);
 
     // Получаем все пути на каждой итерации алгоритма 
@@ -51,7 +51,7 @@ startBtn.addEventListener('click', async function () {
     // Отображаем каждый путь на холсте Canvas 
     for (let i = 0; i < allPaths.length; i++) {
         drawPath(allPaths[i]);
-        await sleep(200); // Добавляем задержку для визуализации 
+        await sleep(30); // Добавляем задержку для визуализации 
     }
 
     allowAddPoints = false; // Установка false, после запуска алгоритма нельзя добавлять вершины, пока не нажмется кнопка "Установить вершины"  

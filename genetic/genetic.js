@@ -103,20 +103,28 @@ export function getFittestIndividual(population, points) {
     return population.reduce((prev, current) => calculatePathDistance(prev.path, points) < calculatePathDistance(current.path, points) ? prev : current);
 }
 
-export function findBestPath(points, populationSize, mutationRate, generations) {
+export function findBestPath(points, populationSize, mutationRate, maxGenerations) {
     let population = createPopulation(populationSize, points.length);
-    let uniquePaths = new Set(); // Используем Set для хранения уникальных путей 
+    let uniquePaths = new Set();
     let fittestIndividual = 0;
+    let generationsWithoutBest = 0;
+    let bestFitness = 0;
 
-    for (let generation = 0; generation < generations; generation++) {
+    while (generationsWithoutBest < maxGenerations) {
         population = evolvePopulation(population, 15, mutationRate, points);
         fittestIndividual = getFittestIndividual(population, points);
+        const currentFitness = calculateFitness(fittestIndividual.path, points);
 
-        // Добавляем только уникальные пути в массив 
+        if (currentFitness > bestFitness) {
+            bestFitness = currentFitness;
+            generationsWithoutBest = 0;
+        } else {
+            generationsWithoutBest++;
+        }
+
         uniquePaths.add(JSON.stringify(fittestIndividual.path));
     }
 
-    // Преобразуем уникальные пути из Set обратно в массив и возвращаем 
     return Array.from(uniquePaths).map(path => JSON.parse(path));
 }
 
