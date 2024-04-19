@@ -1,7 +1,6 @@
 const MAX_CITIES = 30;
 const MAX_DIST = 100;
 const MAX_TOUR = MAX_CITIES * MAX_DIST;
-//const MAX_ANTS = 30;
 const ALPHA = 1.0;
 const BETA = 5.0;
 const RHO = 0.5;
@@ -39,16 +38,31 @@ const antProduct = (pheromone, distance) => Math.pow(pheromone, ALPHA) * Math.po
 const selectNextCity = (cities, ant, phero) => {
     const numCities = cities.length;
     const from = ant.curCity;
-    let maxProb = -1;
-    let nextCity = -1;
+    let totalProbability = 0;
+    const probabilities = [];
 
     for (let to = 0; to < numCities; to++) {
         if (ant.tabu[to] === 0) {
             const prob = antProduct(phero[from][to], dist(cities[from], cities[to]));
-            if (prob > maxProb) {
-                maxProb = prob;
-                nextCity = to;
-            }
+            probabilities.push({ city: to, probability: prob });
+            totalProbability += prob;
+        }
+    }
+
+    // Проверка, что totalProbability не равно нулю (если равно, значит, вероятности не были вычислены)
+    if (totalProbability === 0) {
+        return -1; // Нет доступных городов для выбора
+    }
+
+    // Выбор случайного города с учетом вероятностей
+    let rand = Math.random() * totalProbability;
+    let accumulated = 0;
+    let nextCity = -1;
+    for (const { city, probability } of probabilities) {
+        accumulated += probability;
+        if (accumulated >= rand) {
+            nextCity = city;
+            break;
         }
     }
 
@@ -63,21 +77,17 @@ const init = (vertices) => {
     const numCities = vertices.length;
     const ants = new Array(numCities).fill(null).map(() => new Ant());
 
-    // Initialize cities
     const cities = vertices.map(coord => new City(coord.x, coord.y));
 
-    // Initialize distances and pheromones
     const distMatrix = new Array(numCities).fill(null).map(() => new Array(numCities).fill(0.0));
     const phero = new Array(numCities).fill(null).map(() => new Array(numCities).fill(1.0 / numCities));
 
-    // Calculate distances between cities
     for (let i = 0; i < numCities; i++) {
         for (let j = 0; j < numCities; j++) {
             distMatrix[i][j] = dist(cities[i], cities[j]);
         }
     }
 
-    // Initialize the ants
     ants.forEach((ant, index) => {
         ant.curCity = index;
         ant.tabu[index] = 1;
@@ -87,20 +97,27 @@ const init = (vertices) => {
     return { cities, ants, dist: distMatrix, phero };
 };
 
-const simulateAnts = (cities, ants, dist, phero) => {
+const simulateAnts = (cities, ants, distMatrix, phero) => {
     let moving = 0;
+    let allCitiesVisited = true; // Переменная, чтобы отслеживать, посещены ли все города
 
     for (const ant of ants) {
         if (ant.pathIndex < cities.length || ant.curCity !== ant.path[0]) {
             ant.nextCity = selectNextCity(cities, ant, phero);
 
+            // Если не нашли следующий город, значит все города посещены
+            if (ant.nextCity === -1) {
+                allCitiesVisited = false;
+                continue; // Пропускаем муравья, который не может найти следующий город
+            }
+
             ant.tabu[ant.nextCity] = 1;
             ant.path[ant.pathIndex++] = ant.nextCity;
 
-            ant.tourLength += dist[ant.curCity][ant.nextCity];
+            ant.tourLength += distMatrix[ant.curCity][ant.nextCity]; // Исправление: использование distMatrix вместо dist
 
             if (ant.pathIndex === cities.length) {
-                ant.tourLength += dist[ant.path[cities.length - 1]][ant.path[0]];
+                ant.tourLength += distMatrix[ant.path[cities.length - 1]][ant.path[0]]; // Исправление: использование distMatrix вместо dist
                 ant.curCity = ant.path[0]; // Обновляем текущий город на начальный
             } else {
                 ant.curCity = ant.nextCity;
@@ -112,6 +129,32 @@ const simulateAnts = (cities, ants, dist, phero) => {
         }
     }
 
+    // Проверяем, все ли города посещены после первого прохода
+    if (allCitiesVisited) {
+        // Найдем ближайший непосещенный город для каждого муравья и переместим его туда
+        for (const ant of ants) {
+            if (ant.pathIndex < cities.length) {
+                let nearestCity = -1;
+                let nearestDist = Infinity;
+                for (let i = 0; i < cities.length; i++) {
+                    if (ant.tabu[i] === 0) {
+                        const d = dist(cities[ant.curCity], cities[i]);
+                        if (d < nearestDist) {
+                            nearestDist = d;
+                            nearestCity = i;
+                        }
+                    }
+                }
+                ant.nextCity = nearestCity;
+                ant.tabu[nearestCity] = 1;
+                ant.path[ant.pathIndex++] = nearestCity;
+                ant.tourLength += nearestDist;
+                ant.curCity = nearestCity;
+                moving++;
+            }
+        }
+    }
+
     // Полностью перезаписываем путь для каждого муравья
     for (const ant of ants) {
         if (ant.nextCity === -1) {
@@ -120,37 +163,29 @@ const simulateAnts = (cities, ants, dist, phero) => {
     }
 
     return moving;
-};
+}
 
 const updateTrails = (ants, phero) => {
     const numCities = phero.length;
 
-    for (let from = 0; from < numCities; from++) {
-        for (let to = 0; to < numCities; to++) {
-            if (from !== to) {
-                phero[from][to] *= (1.0 - RHO);
-
-                if (phero[from][to] < 0.0) {
-                    phero[from][to] = INIT_PHER;
-                }
-            }
-        }
-    }
-
+    // Итерация по всем муравьям
     for (const ant of ants) {
-        for (let i = 0; i < ant.path.length; i++) {
+        // Обновление феромонов на каждом шаге маршрута
+        for (let i = 0; i < ant.path.length - 1; i++) {
             const from = ant.path[i];
-            const to = (i < ant.path.length - 1) ? ant.path[i + 1] : ant.path[0];
-
-            phero[from][to] += QVAL / ant.tourLength;
-            phero[to][from] = phero[from][to];
+            const to = ant.path[i + 1];
+            phero[from][to] += QVAL / ant.tourLength; // Увеличиваем феромон на найденном пути
+            phero[to][from] = phero[from][to]; // Симметричное обновление феромонов
         }
     }
 
-    // Здесь определяем numCities
+    // Обновление феромонов на всех путях с учетом испарения
     for (let from = 0; from < numCities; from++) {
         for (let to = 0; to < numCities; to++) {
-            phero[from][to] *= RHO;
+            phero[from][to] *= (1.0 - RHO); // Испарение феромона
+            if (phero[from][to] < 0.0) {
+                phero[from][to] = INIT_PHER; // Предотвращаем отрицательные значения феромонов
+            }
         }
     }
 };

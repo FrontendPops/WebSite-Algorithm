@@ -9,20 +9,6 @@ const drawPoint = (context, x, y, size) => {
     context.closePath();
 };
 
-// const cleanLine = (context, resultCoordinates) => {
-//     context.beginPath();
-//     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-//     context.closePath();
-
-//     for (let j = 0; j < resultCoordinates.length; j++) {
-//         context.beginPath();
-//         context.moveTo(resultCoordinates[i].x, resultCoordinates[i].y);
-//         context.lineTo(resultCoordinates[j].x, resultCoordinates[j].y);
-//         context.stroke(); // Выводим линию на canvas
-//         context.closePath();
-//     }
-// }
-
 const resultDrawLine = (context, resultCoordinates) => {
     context.strokeStyle = colors.redColor;
 
@@ -37,11 +23,10 @@ const resultDrawLine = (context, resultCoordinates) => {
     context.beginPath();
     context.moveTo(resultCoordinates[0].x, resultCoordinates[0].y);
     context.lineTo(resultCoordinates[resultCoordinates.length - 1].x, resultCoordinates[resultCoordinates.length - 1].y);
-    context.stroke(); // Выводим линию на canvas
+    context.stroke();
     context.closePath();
 
     context.strokeStyle = colors.blackColor;
-
 }
 
 const resultLine = (context, resultCoordinates) => {
@@ -52,11 +37,12 @@ const resultLine = (context, resultCoordinates) => {
     }
 }
 
-const find = (context, coordinates) => {
+const find = (context, coordinates, startCoordinatesPoints) => {
     const resultDistance = findShortestPath(coordinates);
     console.log('Дистанция:', resultDistance);
 
     //cleanLine(context, coordinates)
+    startCoordinatesPoints = coordinates.slice();
     resultLine(context, resultDistance);
     resultDrawLine(context, resultDistance);
 }
@@ -74,7 +60,8 @@ const drawLine = (context, coordinatesPoints) => {
 };
 
 const paintDot = () => {
-    const coordinatesPoints = [];
+    let coordinatesPoints = [];
+    let startCoordinatesPoints = [];
     const canvas = document.getElementById('paint');
     const context = canvas.getContext('2d');
 
@@ -94,14 +81,23 @@ const paintDot = () => {
     const searchWayEvent = () => {
         if (!buttonClick.searchWay && coordinatesPoints.length > 0) {
             console.log('WAAAAAAAAAAYYYYYYYYY:', coordinatesPoints);
-            find(context, coordinatesPoints);
+            find(context, coordinatesPoints, startCoordinatesPoints);
             buttonClick.searchWay = true;
         }
     }
 
+    const clearCanvas = () => {
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+        coordinatesPoints.length = 0;
+        buttonClick.searchWay = false;
+    }
+    
+
     canvas.addEventListener('click', draw);
 
     document.getElementById("search").addEventListener("click", searchWayEvent);
+
+    document.getElementById("clear").addEventListener("click", clearCanvas);
 }
 
 document.getElementById("paint").addEventListener("click", function () {
