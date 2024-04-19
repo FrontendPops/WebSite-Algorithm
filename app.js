@@ -13,7 +13,7 @@ canvas.addEventListener('mousedown', (event) => {
 	const yVal = event.clientY - rect.top;
 
 	pointList.push({ x: xVal, y: yVal });
-  console.log(event.clientX, event.clientY);
+  // console.log(event.clientX, event.clientY);
 	drawPoints();
 });
 
@@ -90,8 +90,8 @@ function getRandomInt(max) {
 }
 
 function regionQuery(point, eps) {
-  var neighbors = [];
-  for (var i = 0; i < pointList.length; i++) {
+  let neighbors = [];
+  for (let i = 0; i < pointList.length; i++) {
     if (distance(point, tempPointList[i]) <= eps) {
       neighbors.push(tempPointList[i]);
     }
@@ -198,7 +198,7 @@ function drawClustersDbscan(clusters) {
     let clusterElement = clusters[i];
     ctx.fillStyle = `hsl(${i * 360 / clusters.length}, 100%, 50%)`;
     ctx.beginPath();
-    console.log(clusterElement);
+    // console.log(clusterElement);
     for (let point of clusterElement) {
       ctx.fillRect(point.x, point.y, 8, 8);
     }
@@ -240,11 +240,11 @@ function kMeans(pointList) {
 }
   
 function expandCluster(point, neighbors, eps, minPts) {
-  var cluster = [point];
-  for (var i = 0; i < neighbors.length; i++) {
+  let cluster = [point];
+  for (let i = 0; i < neighbors.length; i++) {
     if (neighbors[i].cluster === undefined) {
       neighbors[i].cluster = cluster[0].cluster;
-      var newNeighbors = regionQuery(neighbors[i], eps);
+      let newNeighbors = regionQuery(neighbors[i], eps);
       if (newNeighbors.length >= minPts) {
         cluster = cluster.concat(expandCluster(neighbors[i], newNeighbors, eps, minPts));
       } else {
@@ -257,16 +257,16 @@ function expandCluster(point, neighbors, eps, minPts) {
 
 function dbscan(pointList) {
   eps = document.getElementById("myRange").value;
-  console.log(eps);
-  var clusters = [];
+  // console.log(eps);
+  let clusters = [];
   tempPointList = [];
-  for (var i = 0 ; i < pointList.length; i++) { 
+  for (let i = 0 ; i < pointList.length; i++) { 
     tempPointList.push({ x: pointList[i].x, y: pointList[i].y });
   }
 
-  for (var i = 0; i < tempPointList.length; i++) {
+  for (let i = 0; i < tempPointList.length; i++) {
     if (tempPointList[i].cluster === undefined) {
-      var neighbors = regionQuery(tempPointList[i], eps);
+      let neighbors = regionQuery(tempPointList[i], eps);
       if (neighbors.length >= minPts) {
         tempPointList[i].cluster = clusters.length;
         clusters.push(expandCluster(tempPointList[i], neighbors, eps, minPts));
@@ -275,8 +275,8 @@ function dbscan(pointList) {
       }
     }
   }
-  console.log(clusters);
-  console.log("DBSCAN: " + clusters.length  + " clusters found.");
+  // console.log(clusters);
+  // console.log("DBSCAN: " + clusters.length  + " clusters found.");
   drawClustersDbscan(clusters);
 }
 
@@ -321,12 +321,12 @@ function hierarchicalClustering(points) {
 }
 
 
-var eps; 
-var minPts = 4; 
+let eps; 
+let minPts = 4; 
 const startButton = document.getElementById('start-button');
 
 startButton.addEventListener('click', () => {
-  console.log("Starting..."); 
+  // console.log("Starting..."); 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   kMeans(pointList);
   dbscan(pointList);
