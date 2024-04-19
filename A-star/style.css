@@ -14,8 +14,7 @@
   font-size: 100%;
 }
 
-h1,
-h3 {
+h1, h3{
   color: #003b59;
 }
 
@@ -63,7 +62,6 @@ h3 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-
 }
 
 .cell {
@@ -143,3 +141,67 @@ h3 {
     transform: rotate(360deg);
   }
 }
+
+
+@media screen and (min-width: 1201px) and (max-width: 1399px){
+
+  .container {
+      margin-top: 0%;
+      width: var(--container-width);
+      height: var(--container-height);
+      border: 1px solid black;
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+  }
+}
+
+@media screen and (min-width: 800px) and (max-width: 1200px) {
+  .containers{
+      margin-left: 3%;
+  }
+
+  .container {
+      margin-top: 0%;
+      width: var(--container-width);
+      height: var(--container-height);
+      border: 1px solid black;
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+  }
+}
+
+@media screen and (min-width: 470px) and (max-width: 799px) {
+  
+  .containers{
+      margin-left: 3%;
+  }
+
+  .container {
+      margin-top: 0%;
+      width: var(--container-width);
+      height: var(--container-height);
+      border: 1px solid black;
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+  }
+}
+
+@media screen and (max-width: 469px) {
+  
+  .container {
+      margin-top: 0%;
+      width: var(--container-width);
+      height: var(--container-height);
+      border: 1px solid black;
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+  }
+} 
