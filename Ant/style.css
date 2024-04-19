@@ -1,0 +1,42 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+}
+
+.head {
+    max-width: 1600px;
+    text-align: center;
+    width: 100%;
+    font-size: 100%;
+}
+
+.text {
+    display: flex;
+    justify-content: center;
+}
+
+.button_button {
+    margin-top: 25px;
+    padding: 10px 15px;
+    background-color: rgb(255, 119, 0);
+    color: white;
+    border-radius: 10px;
+    margin-right: 5px;
+}
+
+button:hover {
+    background-color:  rgb(230, 114, 13);
+    cursor: pointer;
+}
+
+.paint_place {
+    margin-top: 2%;
+    border: 1px solid black; 
+}
