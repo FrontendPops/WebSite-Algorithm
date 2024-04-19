@@ -12,9 +12,9 @@
 .content {
     position: relative;
     min-width: 700px;
+    min-height: calc(100vh - 60px);
     top: 0;
     left: 0;
-    height: 100vh;
     overflow-y: auto;
 }
 
