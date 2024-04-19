@@ -29,6 +29,10 @@
 	width: 100%;
 }
 
+.canvas_border {
+	border: 5px solid;
+	border-image: linear-gradient(to right, steelblue, aquamarine) 1;
+}
 
 .nav-link {
 	display: flex;

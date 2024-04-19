@@ -1,144 +1,144 @@
 * {
-    margin: 0px;
-    padding: 0px;
-    box-sizing: border-box;
-    text-decoration: none;
-    font-family: "Sora", sans-serif;
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: "Sora", sans-serif;
 }
 
 
 .title {
-    max-width: 3840px;
-    text-align: center;
-    width: 100%;
-    font-size: 100%;
+  max-width: 3840px;
+  text-align: center;
+  width: 100%;
+  font-size: 100%;
 }
 
 h1, h3{
-    color: #003b59;
+  color: #003b59;
 }
 
 .header {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 .text {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 
 .head {
-    margin-top: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .input {
-    margin-left: 5px;
-    padding: 10px;
-    border-radius: 15px;
-    color: aquamarine;
-    background: rgba(57, 63, 84, 1)
+  margin-left: 5px;
+  padding: 10px;
+  border-radius: 15px;
+  color: aquamarine;
+  background: rgba(57, 63, 84, 1)
 }
-  
-  
+
+
 
 :root {
-    --container-width: 500px;
-    --container-height: 500px;
+  --container-width: 500px;
+  --container-height: 500px;
 }
 
 .container {
-    background: rgba(57, 63, 84, 1);
-    margin-top: 2%;
-    width: var(--container-width);
-    height: var(--container-height);
-    border: 1px solid black;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  background: rgba(57, 63, 84, 1);
+  margin-top: 2%;
+  width: var(--container-width);
+  height: var(--container-height);
+  border: 1px solid black;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
 }
 
 .cell {
-    border: 1px solid black;
-    margin: 0px;
-    position: absolute;
+  border: 1px solid black;
+  margin: 0px;
+  position: absolute;
 }
 
 .cell:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .button {
-    width: 150px;
-    margin-bottom: 10px;
-    margin-left: 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 15px 30px;
-    border: 0;
-    position: relative;
-    overflow: hidden;
-    border-radius: 10rem;
-    transition: all 0.02s;
-    font-weight: bold;
-    color: rgb(37, 37, 37);
-    z-index: 0;
-    box-shadow: 0 0px 7px -5px rgba(0, 0, 0, 0.5);
-  }
-  
-  .button:hover {
-    background: rgb(193, 228, 248);
-    color: rgb(33, 0, 85);
-  }
-  
-  .button:active {
-    transform: scale(0.97);
-  }
-  
-  .hoverEffect {
-    position: absolute;
-    bottom: 0;
-    top: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1;
-  }
-  
-  .hoverEffect div {
-    background: rgb(222, 0, 75);
-    background: linear-gradient(90deg, rgba(222, 0, 75, 1) 0%, rgba(191, 70, 255, 1) 49%, rgba(0, 212, 255, 1) 100%);
-    border-radius: 40rem;
-    width: 10rem;
-    height: 10rem;
-    transition: 0.4s;
-    filter: blur(20px);
-    animation: effect infinite 3s linear;
-    opacity: 0.5;
-  }
-  
-  .button:hover .hoverEffect div {
-    width: 8rem;
-    height: 8rem;
+  width: 150px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 30px;
+  border: 0;
+  position: relative;
+  overflow: hidden;
+  border-radius: 10rem;
+  transition: all 0.02s;
+  font-weight: bold;
+  color: rgb(37, 37, 37);
+  z-index: 0;
+  box-shadow: 0 0px 7px -5px rgba(0, 0, 0, 0.5);
+}
+
+.button:hover {
+  background: rgb(193, 228, 248);
+  color: rgb(33, 0, 85);
+}
+
+.button:active {
+  transform: scale(0.97);
+}
+
+.hoverEffect {
+  position: absolute;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.hoverEffect div {
+  background: rgb(222, 0, 75);
+  background: linear-gradient(90deg, rgba(222, 0, 75, 1) 0%, rgba(191, 70, 255, 1) 49%, rgba(0, 212, 255, 1) 100%);
+  border-radius: 40rem;
+  width: 10rem;
+  height: 10rem;
+  transition: 0.4s;
+  filter: blur(20px);
+  animation: effect infinite 3s linear;
+  opacity: 0.5;
+}
+
+.button:hover .hoverEffect div {
+  width: 8rem;
+  height: 8rem;
+}
+
+@keyframes effect {
+
+  0% {
+    transform: rotate(0deg);
   }
 
-  @keyframes effect {
-
-    0% {
-      transform: rotate(0deg);
-    }
-  
-    100% {
-      transform: rotate(360deg);
-    }
+  100% {
+    transform: rotate(360deg);
   }
-
+}
