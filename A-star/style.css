@@ -143,6 +143,34 @@ h1, h3{
 }
 
 
+@media screen and (min-width: 1441px) and (max-height: 800px){
+
+  .container {
+      margin-top: 0%;
+      width: var(--container-width);
+      height: var(--container-height);
+      border: 1px solid black;
+      position: absolute;
+      top: 60%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+  }
+}
+
+@media screen and (min-width: 1441px) and (max-height: 700px){
+
+  .container {
+      margin-top: 0%;
+      width: var(--container-width);
+      height: var(--container-height);
+      border: 1px solid black;
+      position: absolute;
+      top: 70%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+  }
+}
+
 @media screen and (min-width: 1201px) and (max-width: 1440px){
 
   .container {
