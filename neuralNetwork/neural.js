@@ -64,7 +64,6 @@ function getDigit() {
 
         const drawnWidth = maxX - minX + 1;
         const drawnHeight = maxY - minY + 1;
-        console.log(drawnWidth, drawnHeight);
         if (drawnWidth <= digitSize && drawnHeight <= digitSize) {
             // Увеличиваем размер нарисованного изображения
             const scaleFactor = 2; // Масштабный коэффициент

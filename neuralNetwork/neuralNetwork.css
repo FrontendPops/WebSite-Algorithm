@@ -64,6 +64,7 @@ p {
 }
 
 .button {
+  width: 200px;
   margin-bottom: 10px;
   display: inline-flex;
   align-items: center;
