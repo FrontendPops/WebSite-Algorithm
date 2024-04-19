@@ -39,7 +39,6 @@ const resultLine = (context, resultCoordinates) => {
 
 const find = (context, coordinates, startCoordinatesPoints) => {
     const resultDistance = findShortestPath(coordinates);
-    console.log('Дистанция:', resultDistance);
 
     //cleanLine(context, coordinates)
     startCoordinatesPoints = coordinates.slice();
@@ -78,9 +77,10 @@ const paintDot = () => {
         }
     }
 
+    buttonClick.searchWay = false;
+
     const searchWayEvent = () => {
         if (!buttonClick.searchWay && coordinatesPoints.length > 0) {
-            console.log('WAAAAAAAAAAYYYYYYYYY:', coordinatesPoints);
             find(context, coordinatesPoints, startCoordinatesPoints);
             buttonClick.searchWay = true;
         }
