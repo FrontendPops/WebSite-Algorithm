@@ -2,7 +2,7 @@ import { colors } from "./constants.js"
 
 const updateColorCell = (matrixSize, matrixContainer, matrixArray, x, y) => {
     const lemonCells = matrixContainer.querySelectorAll('.cell[style="background-color: ' + colors.lemonColor + '"]');
-    lemonCells.forEach(cell => cell.remove());
+    lemonCells.forEach(cell => cell.remove()); //Получаю все ячейки, которые имеют лимонный цвет и стираю
 
     if (matrixArray[x][y] !== 2 && matrixArray[x][y] !== 3) {
         if (matrixArray[x][y] === 1) {
@@ -35,13 +35,13 @@ class NodeCell {
     }
 
     isEqual(other) {
-        return this.position.x === other.position.x && this.position.y === other.position.y;
+        return this.position.x === other.position.x && this.position.y === other.position.y;//сравнение позиции текущего узла и другого узла
     }
 }
 
 const heuristic = (firstElement, secondElement) => {
     return Math.abs(firstElement.position.x - secondElement.position.x) +
-           Math.abs(firstElement.position.y - secondElement.position.y);
+           Math.abs(firstElement.position.y - secondElement.position.y); // использую манхэттенское расстояние
 };
 
 export const findWayAlgorithm = (matrixSize, matrixArray, matrixContainer, start, end) => {
@@ -63,32 +63,32 @@ export const findWayAlgorithm = (matrixSize, matrixArray, matrixContainer, start
         let currentNode = possibleCell[0];
         let currentIndex = 0;
 
-        const addedNeighbors = possibleCell.map(cell => cell !== currentNode);
+        const addedNeighbors = possibleCell.map(cell => cell !== currentNode); // смотрю на соседей точки проверяю что узел добавлен
 
-        if (currentNode.position.x === endNode.position.x && currentNode.position.y === endNode.position.y) {
+        if (currentNode.position.x === endNode.position.x && currentNode.position.y === endNode.position.y) {//проверяю что дошел до конца
             let current = currentNode;
             while (current !== null) {
-                way.push(current.position);
+                way.push(current.position);//записываю путь
                 current = current.parent;
             }
             way.reverse();
             return way;
         }
 
-        updateColorCell(matrixSize, matrixContainer, matrixArray, currentNode.position.x, currentNode.position.y);
+        updateColorCell(matrixSize, matrixContainer, matrixArray, currentNode.position.x, currentNode.position.y);// меняю цвет у текущей рассмотр клетки
 
-        if (addedNeighbors.every(neighbor => neighbor)) {
-            possibleCell.splice(currentIndex, 1);
+        if (addedNeighbors.every(neighbor => neighbor)) {// все ли соседи добавлены
+            possibleCell.splice(currentIndex, 1);// если все то удаляю текущий узел
             passedCell.push(currentNode);
             continue;
         }
 
         possibleCell.splice(currentIndex, 1);
-        passedCell.push(currentNode);
+        passedCell.push(currentNode);// добавляю рассмотренный узел в список посещенных
 
-        const children = [];
+        const children = [];// храню дочерние узлы текущего узла
 
-        const newPositions = [
+        const newPositions = [// новые позиции для дочерних узлов
             [0, -1],
             [-1, 0],
             [0, 1],
@@ -101,37 +101,37 @@ export const findWayAlgorithm = (matrixSize, matrixArray, matrixContainer, start
                 y: currentNode.position.y + newPosition[1]
             };
             if (nodePosition.x > matrixArray.length - 1 || nodePosition.x < 0 ||
-                nodePosition.y > matrixArray[0].length - 1 || nodePosition.y < 0) {
+                nodePosition.y > matrixArray[0].length - 1 || nodePosition.y < 0) {// проверка на границы
                 continue;
             }
             if (matrixArray[nodePosition.x][nodePosition.y] !== 0 && matrixArray[nodePosition.x][nodePosition.y] !== 3) {
-                continue;
+                continue;// смотрю можно ли пройти в новую позицию
             }
-            const newNode = new NodeCell(currentNode, nodePosition.x, nodePosition.y);
+            const newNode = new NodeCell(currentNode, nodePosition.x, nodePosition.y);// создаю новый узел
 
             children.push(newNode);
         }
 
-        for (let child of children) {
+        for (let child of children) {// прохожу по всем дочерним узлам
             let skipChild = false;
 
             for (let currentChild of passedCell) {
                 if (child.isEqual(currentChild)) {
                     skipChild = true;
-                    break;
+                    break;// проверка что узел не был посещен
                 }
             }
             if (skipChild) continue;
         
             child.G = currentNode.G + 1;
-            child.H = heuristic(child, endNode);
+            child.H = heuristic(child, endNode);// считаем стоимость нового узла
             child.F = child.G + child.H;
         
             let found = false;
 
             for (let i = 0; i < possibleCell.length; i++) {
                 const possibleCellNode = possibleCell[i];
-                if (child.isEqual(possibleCellNode)) {
+                if (child.isEqual(possibleCellNode)) {// проверка на нахождение нового узла среди текущих рассматриваемых
                     found = true;
                     if (child.G < possibleCellNode.G) {
                         possibleCellNode.G = child.G;
@@ -143,12 +143,12 @@ export const findWayAlgorithm = (matrixSize, matrixArray, matrixContainer, start
             }
         
             if (!found) {
-                possibleCell.push(child);
+                possibleCell.push(child);// если узла нет в списке возможных узлов добавляем его туда
             } else {
                 const index = possibleCell.findIndex(node => node.isEqual(child));
 
                 if (child.G < possibleCell[index].G) {
-                    possibleCell[index].G = child.G;
+                    possibleCell[index].G = child.G;// записываем расстояние 
                     possibleCell[index].F = child.F;
                     possibleCell[index].parent = child.parent;
                 }
