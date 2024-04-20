@@ -36,14 +36,14 @@ function createPointsCanvas(event) {
 // Кнопка для запуска алгоритма  
 startBtn.addEventListener('click', async function () {
     // Мешаем вершины местами  
-    console.log(points.length)
+    // console.log(points.length)
     shuffleArray(points);
 
     // Выставляем значения для популяции, процента мутации и количества поколений  
     const populationSize = 4000;
     const mutationRate = 0.8;
     const generations = points.length * 3;
-    console.log(generations);
+    // console.log(generations);
 
     // Получаем все пути на каждой итерации алгоритма 
     const allPaths = findBestPath(points, populationSize, mutationRate, generations);
